@@ -1,0 +1,37 @@
+---
+title: "灵珠接入三方智能体协议"
+description: "灵珠平台对接三方智能体的协议规范与示例。"
+---
+
+本文档来自《灵珠接入三方智能体协议》原始文档内容，主要以表格形式定义字段，以下以图片形式保留原始结构。
+
+## 三方智能体 SSE 接口协议请求协议
+
+![三方智能体 SSE 接口协议请求协议](images/lingzhu-protocol/image1.png)
+
+## Message Object
+
+![Message Object](images/lingzhu-protocol/image2.png)
+
+## Metadata Object
+
+![Metadata Object](images/lingzhu-protocol/image3.png)
+
+## Context Object
+
+![Context Object](images/lingzhu-protocol/image4.png)
+
+## 请求示例输出协议
+
+![请求示例输出协议](images/lingzhu-protocol/image5.png)
+
+## Tool Object
+
+![Tool Object](images/lingzhu-protocol/image6.png)
+
+## 输出示例（SSE）
+
+```
+event:message
+data:{"role":"agent","type":"answer","answer_stream":"helfen","message_id":"7597792895776587776","is_finish":false}
+```

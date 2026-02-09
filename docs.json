@@ -40,6 +40,10 @@
       {
         "group": "支持",
         "pages": ["troubleshooting"]
+      },
+      {
+        "group": "协议",
+        "pages": ["lingzhu-protocol"]
       }
     ]
   }
