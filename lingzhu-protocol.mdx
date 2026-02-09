@@ -3,35 +3,123 @@ title: "灵珠接入三方智能体协议"
 description: "灵珠平台对接三方智能体的协议规范与示例。"
 ---
 
-本文档来自《灵珠接入三方智能体协议》原始文档内容，主要以表格形式定义字段，以下以图片形式保留原始结构。
+本文档来自《灵珠接入三方智能体协议》原始文档内容，以下为**表格化整理**（非截图）。
 
-## 三方智能体 SSE 接口协议请求协议
+## 三方智能体 SSE 接口协议（请求）
 
-![三方智能体 SSE 接口协议请求协议](images/lingzhu-protocol/image1.png)
+### Header
+
+| 属性 | 类型 | 必填 | 属性值 | 说明 |
+| --- | --- | --- | --- | --- |
+| Authorization | String | 是 | `Bearer <智能体鉴权AK>` | 智能体请求鉴权 |
+| Content-Type | String | 是 | `application/json` | 固定值 |
+
+### Body
+
+| 属性 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| message_id | String | 是 | 消息 ID，维持上下文 |
+| agent_id | String | 是 | 智能体 ID |
+| message | Message Object[] | 是 | 用户输入数组 |
+| user_id | String | 否 | 用户 ID |
+| metadata | Metadata Object | 否 | 可选元数据 |
 
 ## Message Object
 
-![Message Object](images/lingzhu-protocol/image2.png)
+| 属性 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| role | string | 是 | 角色：`user` / `agent` |
+| type | string | 是 | 消息类型：`text` / `image` |
+| text | string | 否 | 文本内容（`type=text` 时必填） |
+| image_url | string | 否 | 图片内容（`type=image` 时必填） |
 
 ## Metadata Object
 
-![Metadata Object](images/lingzhu-protocol/image3.png)
+| 属性 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| context | Context Object | 是 | 灵珠平台传入的设备信息（天气、电量、位置等） |
 
 ## Context Object
 
-![Context Object](images/lingzhu-protocol/image4.png)
+| 属性 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| location | string | 是 | 设备当前所在位置信息 |
+| latitude | string | 是 | 设备当前所在纬度 |
+| longitude | string | 是 | 设备当前所在经度 |
+| weather | string | 是 | 设备当前所在地天气信息 |
+| battery | string | 是 | 设备当前电量 |
 
-## 请求示例输出协议
+## SSE 输出协议（响应）
 
-![请求示例输出协议](images/lingzhu-protocol/image5.png)
+### 事件行
+
+| 字段 | 类型 | 必填 | 取值 | 说明 |
+| --- | --- | --- | --- | --- |
+| event | event | 是 | `message` / `done` | 事件类型，`done` 表示结束 |
+
+### data 对象
+
+| 字段 | 类型 | 必填 | 取值 | 说明 |
+| --- | --- | --- | --- | --- |
+| role | String | 是 | `agent` | 角色 |
+| message_id | String | 是 | 消息 ID | 维持上下文 |
+| agent_id | String | 是 | 智能体 ID |  |
+| answer_stream | String | 否 | 输出内容 | 流式输出 |
+| is_finish | Boolean | 是 | true/false | 是否完成 |
+| type | String | 是 | `answer` / `tool_call` / `follow_up` | 返回类型（文本/工具调用/用户问题建议） |
+| follow_up | string[] | 否 | 用户问题建议 | 用户问题建议列表 |
+| tool_call | Tool Object | 否 | 工具调用 | 工具调用 |
 
 ## Tool Object
 
-![Tool Object](images/lingzhu-protocol/image6.png)
+| 属性 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| command | String | 是 | 命令：`take_photo`（拍照）/ `take_navigation`（导航）/ `notify_agent_off`（退出智能体）/ `control_calendar`（添加日程） |
+| action | String | 否 | `take_navigation` 时：`open` / `close`；`control_calendar` 时：`create` |
+| poi_name | String | 否 | `take_navigation` 时：目标地址 |
+| navi_type | String | 否 | 导航类型：`0` 驾车 / `1` 步行 / `2` 骑行 |
+| title | String | 否 | `control_calendar` 时：日程标题 |
+| start_time | String | 否 | `control_calendar` 时：日程开始时间 |
+| end_time | String | 否 | `control_calendar` 时：日程结束时间 |
+
+## 请求示例（curl）
+
+```bash
+curl -N -X POST "https://example.com/agent/sse" \
+  -H "Authorization: Bearer <智能体鉴权AK>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message_id": "msg_123",
+    "agent_id": "agent_123",
+    "message": [
+      { "role": "user", "type": "text", "text": "你好" }
+    ],
+    "user_id": "user_001",
+    "metadata": {
+      "context": {
+        "location": "上海市浦东新区",
+        "latitude": "31.2304",
+        "longitude": "121.4737",
+        "weather": "晴",
+        "battery": "0.78"
+      }
+    }
+  }'
+```
 
 ## 输出示例（SSE）
 
+```text
+event: message
+data: {"role":"agent","type":"answer","answer_stream":"helfen","message_id":"7597792895776587776","agent_id":"agent_123","is_finish":false}
 ```
-event:message
-data:{"role":"agent","type":"answer","answer_stream":"helfen","message_id":"7597792895776587776","is_finish":false}
+
+```text
+event: message
+data: {"role":"agent","type":"follow_up","follow_up":["你想了解哪种智能体能力？","是否需要我展示配置示例？"],"message_id":"7597792895776587776","agent_id":"agent_123","is_finish":true}
+```
+
+```text
+event: message
+data: {"role":"agent","type":"tool_call","tool_call":{"command":"take_navigation","action":"open","poi_name":"上海虹桥火车站","navi_type":"0"},"message_id":"7597792895776587776","agent_id":"agent_123","is_finish":true}
 ```
