@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "灵珠 Agent Bridge",
+  "name": "Rokid Rizon 灵珠智能体开发平台 Agent Bridge",
   "colors": {
     "primary": "#2563eb"
   },
@@ -43,7 +43,7 @@
       },
       {
         "group": "协议",
-        "pages": ["lingzhu-protocol"]
+        "pages": ["rizon-protocol"]
       }
     ]
   }

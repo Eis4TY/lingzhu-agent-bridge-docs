@@ -7,14 +7,14 @@ description: "Docker 与生产环境部署建议。"
 
 ### 镜像地址
 
-- `ghcr.io/eis4ty/lingzhu-agent-bridge:latest`
+- `ghcr.io/eis4ty/rokid-rizon-agent-bridge:latest`
 
 > 首次拉取需要登录 GitHub Container Registry（GHCR）。
 
 ### 构建镜像
 
 ```bash
-docker build -t lingzhu-bridge .
+docker build -t rokid-rizon-agent-bridge .
 ```
 
 ### 运行容器
@@ -24,7 +24,7 @@ docker run -p 3000:3000 \
   -v $(pwd)/bindings.json:/app/bindings.json \
   -v $(pwd)/settings.json:/app/settings.json \
   -v $(pwd)/logs.json:/app/logs.json \
-  lingzhu-bridge
+  rokid-rizon-agent-bridge
 ```
 
 > 建议挂载 `bindings.json` 与 `settings.json` 以持久化配置。
@@ -33,7 +33,7 @@ docker run -p 3000:3000 \
 
 ```bash
 docker login ghcr.io
-docker pull ghcr.io/eis4ty/lingzhu-agent-bridge:latest
+docker pull ghcr.io/eis4ty/rokid-rizon-agent-bridge:latest
 ```
 
 ```bash
@@ -41,7 +41,7 @@ docker run -p 3000:3000 \
   -v $(pwd)/bindings.json:/app/bindings.json \
   -v $(pwd)/settings.json:/app/settings.json \
   -v $(pwd)/logs.json:/app/logs.json \
-  ghcr.io/eis4ty/lingzhu-agent-bridge:latest
+  ghcr.io/eis4ty/rokid-rizon-agent-bridge:latest
 ```
 
 ## Node 生产部署
